@@ -69,12 +69,6 @@ namespace Task_Management_Api.Services
                 {
                     return new ServiceResponse<TaskDto> { Data = taskdto, State = State.Success };
                 }
-                //taskdto.UsersId ??= [];
-                //foreach (var taskcomment in task.TaskComments)
-                //{
-                //    taskdto.UsersId.Add(taskcomment.UserId);
-                //}
-
 
             }
             return new ServiceResponse<TaskDto> { Data = taskdto, State = State.Success };
