@@ -23,20 +23,9 @@ namespace Task_Management_Api.Services
         {
             try
             {
-                // Fill Name and Discription for Task
+
+                // map TaskDto comes from User into Task Element to save in the Databsae
                 var task = _mapper.Map<Models.Task>(Dto);
-
-                if (Dto.UsersId != null)
-                {
-                    task.TaskComments = [];
-                    foreach (var UserId in Dto.UsersId)
-                    {
-                        task.TaskComments.Add(
-                            new TaskComment { UserId = UserId }
-                        );
-
-                    }
-                }
 
                 _context.Tasks.Add(task);
                 await _context.SaveChangesAsync();
@@ -45,32 +34,27 @@ namespace Task_Management_Api.Services
             }
             catch (Exception ex)
             {
+                //Handle if the Database server crashes or the data didnt saved
                 return State.ServerError;
             }
 
         }
 
-
         public async Task<ServiceResponse<TaskDto>> GetTaskById(int id)
         {
             TaskDto taskdto;
 
-            var task = await _context.Tasks.Include(t => t.TaskComments).FirstOrDefaultAsync(t => t.Id == id);
+            var task = await _context.Tasks
+                .Include(t => t.TaskComments)
+                .FirstOrDefaultAsync(t => t.Id == id);
 
-            if (task == null)
-            {
+            //check if no task exist for the given Id 
+            if (task == null){
                 return new ServiceResponse<TaskDto> { State = State.NotFound };
             }
-            else
-            {
-                taskdto = _mapper.Map<TaskDto>(task);
-
-                if (task.TaskComments == null)
-                {
-                    return new ServiceResponse<TaskDto> { Data = taskdto, State = State.Success };
-                }
-
-            }
+            //map Task comes from the database to the TaskDto returned to the user
+            taskdto = _mapper.Map<TaskDto>(task);
+  
             return new ServiceResponse<TaskDto> { Data = taskdto, State = State.Success };
 
         }
@@ -100,10 +84,13 @@ namespace Task_Management_Api.Services
                     Message = "NO Task Found For That User"
                 };
             }
-            var tasklist = await taskcomments
-                .Include(tc => tc.Task)
-                .Select(t => t.Task)
-                .ToListAsync();
+            //get the assigned task to that user
+
+            var tasklist = taskcomments
+               .Include(tc => tc.Task)
+               .ThenInclude(t => t.TaskComments)
+               .Select(tc => tc.Task)
+               .ToList();
 
             var taskdtolist = _mapper.Map<List<TaskDto>>(tasklist);
 
