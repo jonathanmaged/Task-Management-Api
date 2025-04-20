@@ -40,9 +40,6 @@ namespace Task_Management_Api.Services
 
                 _context.Tasks.Add(task);
                 await _context.SaveChangesAsync();
-                var tc = _context.TaskComments.ToList();
-                var T = _context.Tasks.ToList();
-                var U = _context.Users.ToList();
 
                 return State.Success;
             }
@@ -58,7 +55,7 @@ namespace Task_Management_Api.Services
         {
             TaskDto taskdto;
 
-            var task = await _context.Tasks.FirstOrDefaultAsync(t => t.Id == id);
+            var task = await _context.Tasks.Include(t => t.TaskComments).FirstOrDefaultAsync(t => t.Id == id);
 
             if (task == null)
             {
@@ -72,11 +69,11 @@ namespace Task_Management_Api.Services
                 {
                     return new ServiceResponse<TaskDto> { Data = taskdto, State = State.Success };
                 }
-                taskdto.UsersId ??= [];
-                foreach (var taskcomment in task.TaskComments)
-                {
-                    taskdto.UsersId.Add(taskcomment.UserId);
-                }
+                //taskdto.UsersId ??= [];
+                //foreach (var taskcomment in task.TaskComments)
+                //{
+                //    taskdto.UsersId.Add(taskcomment.UserId);
+                //}
 
 
             }
@@ -87,6 +84,8 @@ namespace Task_Management_Api.Services
         public async Task<ServiceResponse<List<TaskDto>>> GetTasksByUser(int id)
         {
             var user = await _context.Users.FindAsync(id);
+
+            //check if no user with that id
             if (user == null)
             {
                 return new ServiceResponse<List<TaskDto>>
@@ -97,6 +96,8 @@ namespace Task_Management_Api.Services
             }
 
             var taskcomments = _context.TaskComments.Where(tc => tc.UserId == id);
+
+            //check if there is no task assigned to that user
             if (! await taskcomments.AnyAsync())
             {
                 return new ServiceResponse<List<TaskDto>>
@@ -109,7 +110,9 @@ namespace Task_Management_Api.Services
                 .Include(tc => tc.Task)
                 .Select(t => t.Task)
                 .ToListAsync();
+
             var taskdtolist = _mapper.Map<List<TaskDto>>(tasklist);
+
             return new ServiceResponse<List<TaskDto>>
             {
                 Data = taskdtolist,

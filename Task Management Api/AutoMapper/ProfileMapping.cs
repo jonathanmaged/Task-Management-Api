@@ -9,7 +9,10 @@ namespace Task_Management_Api.AutoMapper
         public ProfileMapping()
         {
             CreateMap<TaskDto,Task>();
-            CreateMap<Task,TaskDto>();
+            CreateMap<Task, TaskDto>()
+                .ForMember(dest => dest.UsersId,
+                    opt => opt.MapFrom(src => src.TaskComments.Select(tc => tc.UserId).ToList()));
+
         }
     }
 }
