@@ -82,6 +82,12 @@ builder.Services.AddControllers();
 
 var app = builder.Build();
 
+
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+     DataSeeder.SeedDatabase(dbContext); // Call your seed method
+}
 // Configure the HTTP request pipeline.
 
 if (app.Environment.IsDevelopment()) 
