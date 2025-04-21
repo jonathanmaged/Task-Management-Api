@@ -19,23 +19,29 @@ namespace Task_Management_Api.Services
             _context = context;
             _mapper = mapper;
         }
-        public async Task<State> CreateTask(TaskDto Dto)
+        public async Task<ServiceResponse<TaskDto>> CreateTask(TaskDto Dto)
         {
             try
             {
-                
+                //check the usersid list if any userid doesnt exist
+                var response = await CheckUsersExistence(Dto);
+                if (response.State == State.NotFound) {
+                    return response;
+                }
+
                 // map TaskDto comes from User into Task Element to save in the Databsae
                 var task = _mapper.Map<Models.Task>(Dto);
 
                 _context.Tasks.Add(task);
                 await _context.SaveChangesAsync();
 
-                return State.Success;
+                return response;
             }
             catch (Exception ex)
             {
                 //Handle if the Database server crashes or the data didnt saved
-                return State.ServerError;
+                
+                return new ServiceResponse<TaskDto> { State = State.ServerError};
             }
 
         }
@@ -99,6 +105,24 @@ namespace Task_Management_Api.Services
                 Data = taskdtolist,
                 State = State.Success,              
             };
+
+        }
+        private async Task<ServiceResponse<TaskDto>> CheckUsersExistence(TaskDto dto) {
+            if (dto.UsersId != null) {
+                foreach (var userid in dto.UsersId)
+                {
+                    if (!await _context.Users.AnyAsync(u => u.Id == userid))
+                    {
+                        return new ServiceResponse<TaskDto>
+                        {
+                            Message = $"user with id {userid} doesnt exist",
+                            State = State.NotFound
+                        };
+                    }
+                }
+            }
+
+            return new ServiceResponse<TaskDto> { State = State.Success} ;
 
         }
     

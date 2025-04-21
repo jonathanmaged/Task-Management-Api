@@ -26,9 +26,10 @@ namespace Task_Management_Api.Controllers
         {
             if (ModelState.IsValid) 
             {
-                var state = await _taskService.CreateTask(Dto);
-     
-                if (state == State.ServerError) { return StatusCode(500); }
+                var serviceresponse = await _taskService.CreateTask(Dto);
+
+                if (serviceresponse.State == State.ServerError) { return StatusCode(500); }
+                if (serviceresponse.State == State.NotFound) { return StatusCode(404,serviceresponse.Message); }
 
                 return StatusCode(201,Dto);
                 
