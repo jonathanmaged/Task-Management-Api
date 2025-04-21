@@ -7,7 +7,7 @@ using Task_Management_Api.Shared;
 
 namespace Task_Management_Api.Controllers
 {
-    //[Authorize]
+    [Authorize]
     [ApiController]
     [Route("tasks")]
     public class TasksController : ControllerBase
@@ -21,7 +21,7 @@ namespace Task_Management_Api.Controllers
 
 
         [HttpPost]
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateTask([FromBody] TaskDto Dto)
         {
             if (ModelState.IsValid) 

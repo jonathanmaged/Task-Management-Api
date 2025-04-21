@@ -63,7 +63,7 @@ namespace Task_Management_Api.Services
         {
             var user = await _context.Users.FindAsync(id);
 
-            //check if no user with that id
+            //check if no user exist with that id
             if (user == null)
             {
                 return new ServiceResponse<List<TaskDto>>
@@ -101,5 +101,6 @@ namespace Task_Management_Api.Services
             };
 
         }
+    
     }
 }
