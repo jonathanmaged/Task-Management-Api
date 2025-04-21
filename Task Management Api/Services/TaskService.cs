@@ -19,12 +19,12 @@ namespace Task_Management_Api.Services
             _context = context;
             _mapper = mapper;
         }
-        public async Task<ServiceResponse<TaskDto>> CreateTask(TaskDto Dto)
+        public async Task<ServiceResponse<TaskDto>> CreateTaskAsync(TaskDto Dto)
         {
             try
             {
                 //check the usersid list if any userid doesnt exist
-                var response = await CheckUsersExistence(Dto);
+                var response = await CheckUsersExistenceAsync(Dto);
                 if (response.State == State.NotFound) {
                     return response;
                 }
@@ -46,7 +46,7 @@ namespace Task_Management_Api.Services
 
         }
 
-        public async Task<ServiceResponse<TaskDto>> GetTaskById(int id)
+        public async Task<ServiceResponse<TaskDto>> GetTaskByIdAsync(int id)
         {
             TaskDto taskdto;
 
@@ -65,7 +65,7 @@ namespace Task_Management_Api.Services
 
         }
 
-        public async Task<ServiceResponse<List<TaskDto>>> GetTasksByUser(int id)
+        public async Task<ServiceResponse<List<TaskDto>>> GetTasksByUserAsync(int id)
         {
             var user = await _context.Users.FindAsync(id);
 
@@ -107,7 +107,7 @@ namespace Task_Management_Api.Services
             };
 
         }
-        private async Task<ServiceResponse<TaskDto>> CheckUsersExistence(TaskDto dto) {
+        private async Task<ServiceResponse<TaskDto>> CheckUsersExistenceAsync(TaskDto dto) {
             if (dto.UsersId != null) {
                 foreach (var userid in dto.UsersId)
                 {

@@ -26,7 +26,7 @@ namespace Task_Management_Api.Controllers
         {
             if (ModelState.IsValid) 
             {
-                var serviceresponse = await _taskService.CreateTask(Dto);
+                var serviceresponse = await _taskService.CreateTaskAsync(Dto);
 
                 if (serviceresponse.State == State.ServerError) { return StatusCode(500); }
                 if (serviceresponse.State == State.NotFound) { return StatusCode(404,serviceresponse.Message); }
@@ -47,7 +47,7 @@ namespace Task_Management_Api.Controllers
         {
             if (ModelState.IsValid)
             {
-                var serviceresponse = await _taskService.GetTaskById(id);
+                var serviceresponse = await _taskService.GetTaskByIdAsync(id);
 
                 if (serviceresponse.State == State.NotFound) { return NotFound(); }
 
@@ -62,7 +62,7 @@ namespace Task_Management_Api.Controllers
         {
             if (ModelState.IsValid)
             {
-                var serviceresponse = await _taskService.GetTasksByUser(id);
+                var serviceresponse = await _taskService.GetTasksByUserAsync(id);
                 if (serviceresponse.State == State.NotFound) { return NotFound(serviceresponse.Message); }
                 return Ok(serviceresponse.Data);                        
             }

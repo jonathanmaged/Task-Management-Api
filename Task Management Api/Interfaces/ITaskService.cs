@@ -6,8 +6,8 @@ namespace Task_Management_Api.Interfaces
 {
     public interface ITaskService
     {
-        public Task<ServiceResponse<TaskDto>> CreateTask(TaskDto Dto);
-        public Task<ServiceResponse<TaskDto>> GetTaskById(int id);
-        public Task<ServiceResponse<List<TaskDto>>> GetTasksByUser(int id);
+        public Task<ServiceResponse<TaskDto>> CreateTaskAsync(TaskDto Dto);
+        public Task<ServiceResponse<TaskDto>> GetTaskByIdAsync(int id);
+        public Task<ServiceResponse<List<TaskDto>>> GetTasksByUserAsync(int id);
     }
 }
