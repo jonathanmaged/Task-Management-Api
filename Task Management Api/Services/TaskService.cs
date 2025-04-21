@@ -23,7 +23,7 @@ namespace Task_Management_Api.Services
         {
             try
             {
-
+                
                 // map TaskDto comes from User into Task Element to save in the Databsae
                 var task = _mapper.Map<Models.Task>(Dto);
 
@@ -86,11 +86,11 @@ namespace Task_Management_Api.Services
             }
             //get the assigned task to that user
 
-            var tasklist = taskcomments
+            var tasklist = await taskcomments
                .Include(tc => tc.Task)
                .ThenInclude(t => t.TaskComments)
                .Select(tc => tc.Task)
-               .ToList();
+               .ToListAsync();
 
             var taskdtolist = _mapper.Map<List<TaskDto>>(tasklist);
 
