@@ -12,11 +12,11 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["Task Management Api/Task Management Api.csproj", "Task Management Api/"]
-RUN dotnet restore "./Task Management Api/Task Management Api.csproj"
-COPY . .
-WORKDIR "/src/Task Management Api"
-RUN dotnet build "./Task Management Api.csproj" -c $BUILD_CONFIGURATION -o /app/build
+COPY ["Task Management Api.csproj", "Task Management Api/"]
+RUN dotnet restore "Task Management Api/Task Management Api.csproj"
+COPY ["./" , "Task Management Api/"]
+WORKDIR /src/Task Management Api
+RUN dotnet build "Task Management Api.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 # This stage is used to publish the service project to be copied to the final stage
 FROM build AS publish
